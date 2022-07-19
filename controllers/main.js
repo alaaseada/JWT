@@ -7,13 +7,13 @@
     4. Send back to the front-end
     5. Setup an authentication mechanism to allow accessing the dashboard for only users with valid JWT.
 */
-const CustomError = require("../errors/custom-error");
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+const { BadRequestError } = require("../errors");
 
 const login = async (req, res) => {
     const { username , password } = req.body;
     if(!username || !password){
-        throw new CustomError(message="username/password cannot be empty.", statusCode=400);
+        throw new BadRequestError("username/password cannot be empty.");
     }
     // Payload object should not contain any sensetive data, and the smaller, the better.
     // id is for demonstration only, usually get it from the DB
@@ -24,6 +24,8 @@ const login = async (req, res) => {
 
 const dashboard = async(req, res) => {
     const lucky_number = Math.floor(Math.random() * 100);
-    res.status(200).json({ msg: `Hello, Alaa.`, secret: `Your lucky number is ${lucky_number}`});
+    res.status(200).json({ msg: `Hello, ${req.user.username}.`, secret: `Your lucky number is ${lucky_number}`});
 }
+
+
 module.exports = { login, dashboard };
